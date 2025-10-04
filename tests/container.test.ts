@@ -10,6 +10,7 @@ import { IEventPublisher } from './../src/Services/HomeAssistant/EventPublisher'
 import { IHttpServer } from './../src/config/HttpServer'
 import { IMediaUrlMessageCreator } from './../src/Services/Message/MediaUrlMessageCreator'
 import { ITextMessageCreator } from './../src/Services/Message/TextMessageCreator'
+import { IPollMessageCreator } from './../src/Services/Message/PollMessageCreator'
 import { IWebSocket } from './../src/Libs/WebSocket'
 import { ILogger } from './../src/Libs/Logger'
 import { prepareAll, releaseAll } from 'true-di'
@@ -74,6 +75,7 @@ describe('container', () => {
         expect(items.webSocket).toBeDefined()
         expect(items.textMessageCreator).toBeDefined()
         expect(items.mediaUrlMessageCreator).toBeDefined()
+        expect(items.pollMessageCreator).toBeDefined()
         expect(items.haEventPublisher).toBeDefined()
         expect(items.homeAssistant).toBeDefined()
 
@@ -125,6 +127,7 @@ describe('container', () => {
             webSocket: IWebSocket
             textMessageCreator: ITextMessageCreator
             mediaUrlMessageCreator: IMediaUrlMessageCreator
+            pollMessageCreator: IPollMessageCreator
             haEventPublisher: IEventPublisher
             homeAssistant: IHomeAssistant
 
