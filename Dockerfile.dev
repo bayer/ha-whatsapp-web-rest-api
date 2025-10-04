@@ -8,6 +8,6 @@ RUN  apt-get update \
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm install -g nodemon
+RUN npm install -g nodemon ts-node typescript
 CMD npm run dev
 
