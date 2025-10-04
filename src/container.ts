@@ -21,6 +21,7 @@ import WebSocket, { IWebSocket } from './Libs/WebSocket'
 import Whatsapp, { IWhatsapp } from './Libs/Whatsapp'
 import TextMessageCreator, { ITextMessageCreator } from './Services/Message/TextMessageCreator'
 import MediaUrlMessageCreator, { IMediaUrlMessageCreator } from './Services/Message/MediaUrlMessageCreator'
+import PollMessageCreator, { IPollMessageCreator } from './Services/Message/PollMessageCreator'
 import { getClient as getWhatsappClient } from './config/WhatsappClient'
 import EventPublisher, { IEventPublisher } from './Services/HomeAssistant/EventPublisher'
 import HomeAssistant, { IHomeAssistant } from './Libs/HomeAssistant'
@@ -48,6 +49,7 @@ export interface IServices {
     webSocket: IWebSocket
     textMessageCreator: ITextMessageCreator
     mediaUrlMessageCreator: IMediaUrlMessageCreator
+    pollMessageCreator: IPollMessageCreator
     haEventPublisher: IEventPublisher
     homeAssistant: IHomeAssistant
     // chat
@@ -114,6 +116,9 @@ export default diContainer<IServices>({
 
     mediaUrlMessageCreator: ({ whatsapp }) =>
         new MediaUrlMessageCreator(whatsapp),
+
+    pollMessageCreator: ({ whatsapp }) =>
+        new PollMessageCreator(whatsapp),
 
     haEventPublisher: ({ logger }) =>
         new EventPublisher(logger, haToken, haBaseUrl),

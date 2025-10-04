@@ -9,6 +9,7 @@ import MessageValidator from '../validators/MessageValidator'
 import { Request, Response, NextFunction as Next } from 'express'
 import { ITextMessageCreator } from './../../Services/Message/TextMessageCreator'
 import { IMediaUrlMessageCreator } from './../../Services/Message/MediaUrlMessageCreator'
+import { IPollMessageCreator } from './../../Services/Message/PollMessageCreator'
 import { Message } from 'whatsapp-web.js'
 import { IMessageMediaDownloader } from './../../Services/Message/MessageMediaDownloader'
 import { IBase64FileDownloader } from './../../Services/Response/Base64FIleDownloader'
@@ -24,11 +25,11 @@ export const show = (request: Request, response: Response, next: Next) =>
             .then(message => response.json(message.rawData), next)
 
 export const store = (request: Request, response: Response, next: Next) =>
-    async ({ textMessageCreator, mediaUrlMessageCreator }: { textMessageCreator: ITextMessageCreator, mediaUrlMessageCreator: IMediaUrlMessageCreator }) => {
+    async ({ textMessageCreator, mediaUrlMessageCreator, pollMessageCreator }: { textMessageCreator: ITextMessageCreator, mediaUrlMessageCreator: IMediaUrlMessageCreator, pollMessageCreator: IPollMessageCreator }) => {
         try {
             await MessageValidator(request, response)
 
-            const { msg, url, to }: { msg: string, url: string, to: string | undefined } = request.body
+            const { msg, url, to, poll } = request.body as any
             let chat: string = to ?? request.params.id
             let message: Message | null = null
 
@@ -51,7 +52,16 @@ export const store = (request: Request, response: Response, next: Next) =>
                 stickerCategories: request.body.options?.stickerCategories
             }
 
-            if (url !== undefined) {
+            // If a poll payload is provided, send a poll
+            if (poll && (Array.isArray(poll.options) || Array.isArray(poll.pollOptions))) {
+                const pollName: string = poll.name ?? poll.pollName
+                const pollOptions: string[] = poll.options ?? poll.pollOptions
+                const pollSendOptions = poll.sendOptions ?? {
+                    allowMultipleAnswers: poll.allowMultipleAnswers,
+                    messageSecret: poll.messageSecret
+                }
+                message = await pollMessageCreator.create(chat, pollName, pollOptions, pollSendOptions, options)
+            } else if (url !== undefined) {
                 message = await mediaUrlMessageCreator.create(chat, url, options)
             } else {
                 message = await textMessageCreator.create(chat, msg, options)

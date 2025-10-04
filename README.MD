@@ -32,6 +32,7 @@ _A WhatsApp Http API Rest for NodeJS and integrated with Home Assistant_
     - [Send Message](#send-message)
       - [Send text message](#send-text-message)
       - [Send media message](#send-media-message)
+      - [Send poll message](#send-poll-message)
     - [Star Message](#star-message)
     - [Unstar Message](#unstar-message)
     - [React to Message](#react-to-message)
@@ -355,6 +356,26 @@ Request Body:
     }
 }
 ```
+
+#### **Send poll message**
+
+Send a poll to a chat.
+
+`POST /api/chats/{id}/messages` using a `poll`-Payload
+
+Request Body:
+```json
+{
+  "poll": {
+    "name": "What is your favorite food?",
+    "options": ["Pizza", "Sushi", "Burger"],
+    "sendOptions": {
+      "allowMultipleAnswers": false
+    }
+  }
+}
+```
+
 ### **Star Message**
 
 `PUT` `/api/chats/{id}/messages/{messageId}/star`
